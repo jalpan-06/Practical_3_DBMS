@@ -1,1 +1,0 @@
-# Practical_3_DBMS

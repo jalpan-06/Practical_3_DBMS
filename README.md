@@ -1,99 +1,122 @@
-# College Database Management System
+# 🎓 College Database Management System
 
-A relational database project built using SQL to demonstrate the design and implementation of a college management database. The project includes departments, students, courses, enrollments, and faculty, with appropriate **primary keys, foreign keys, unique constraints, not-null constraints, and check constraints**.
+A relational database project built with **MySQL** to model and manage core academic information for a college. The database demonstrates relationships between departments, students, courses, enrollments, and faculty members using SQL constraints and relational database concepts.
+
+---
 
 ## 📌 Overview
 
-The `college_demo` database models common academic entities and their relationships:
+The `college_demo` database consists of five main entities:
 
-* **Department** – Stores department information.
-* **Student** – Stores student personal and academic information.
-* **Course** – Stores courses offered by departments.
-* **Enrollment** – Connects students with courses and stores semester and grade information.
-* **Faculty** – Stores faculty details and their associated departments.
+* **Department** – Stores information about academic departments.
+* **Student** – Stores student details and their department associations.
+* **Course** – Stores courses offered by each department.
+* **Enrollment** – Records student course enrollments, semesters, and grades.
+* **Faculty** – Stores faculty information and their associated departments.
 
-The project demonstrates fundamental **Relational Database Management System (RDBMS)** concepts and SQL constraints.
+The project demonstrates the use of **Primary Keys, Foreign Keys, Unique Constraints, NOT NULL Constraints, CHECK Constraints, and Composite Primary Keys**.
 
-## 🗄️ Database Schema
+---
+
+## 🗃️ Database Schema
 
 ### Department
 
-| Column      | Data Type   | Constraint       | Description            |
-| ----------- | ----------- | ---------------- | ---------------------- |
-| `dept_id`   | INT         | Primary Key      | Unique department ID   |
-| `dept_name` | VARCHAR(50) | UNIQUE, NOT NULL | Name of the department |
+Stores information about college departments.
+
+| Column      | Data Type   | Constraints      | Description                  |
+| ----------- | ----------- | ---------------- | ---------------------------- |
+| `dept_id`   | INT         | PRIMARY KEY      | Unique department identifier |
+| `dept_name` | VARCHAR(50) | UNIQUE, NOT NULL | Name of the department       |
 
 ### Student
 
-| Column      | Data Type   | Constraint  | Description                   |
+Stores student personal and academic information.
+
+| Column      | Data Type   | Constraints | Description                   |
 | ----------- | ----------- | ----------- | ----------------------------- |
-| `roll_no`   | INT         | Primary Key | Unique student roll number    |
+| `roll_no`   | INT         | PRIMARY KEY | Unique student roll number    |
 | `name`      | VARCHAR(50) | NOT NULL    | Student's name                |
-| `email`     | VARCHAR(50) | UNIQUE      | Student email address         |
+| `email`     | VARCHAR(50) | UNIQUE      | Student email                 |
 | `aadhar_no` | VARCHAR(12) | UNIQUE      | Student identification number |
-| `dept_id`   | INT         | Foreign Key | Student's department          |
+| `dept_id`   | INT         | FOREIGN KEY | Associated department         |
 
 ### Course
 
-| Column        | Data Type   | Constraint  | Description                    |
+Stores courses offered by departments.
+
+| Column        | Data Type   | Constraints | Description                    |
 | ------------- | ----------- | ----------- | ------------------------------ |
-| `course_id`   | INT         | Primary Key | Unique course ID               |
+| `course_id`   | INT         | PRIMARY KEY | Unique course identifier       |
 | `course_name` | VARCHAR(50) | NOT NULL    | Name of the course             |
-| `dept_id`     | INT         | Foreign Key | Department offering the course |
+| `dept_id`     | INT         | FOREIGN KEY | Department offering the course |
 
 ### Enrollment
 
-| Column      | Data Type | Constraint               | Description                    |
-| ----------- | --------- | ------------------------ | ------------------------------ |
-| `roll_no`   | INT       | Primary Key, Foreign Key | Enrolled student's roll number |
-| `course_id` | INT       | Primary Key, Foreign Key | Enrolled course                |
-| `semester`  | INT       | CHECK (1–8)              | Semester of enrollment         |
-| `grade`     | CHAR(2)   | —                        | Grade received                 |
+Stores the courses taken by students.
 
-The enrollment table uses a **composite primary key** consisting of:
+| Column      | Data Type | Constraints              | Description            |
+| ----------- | --------- | ------------------------ | ---------------------- |
+| `roll_no`   | INT       | PRIMARY KEY, FOREIGN KEY | Student roll number    |
+| `course_id` | INT       | PRIMARY KEY, FOREIGN KEY | Course identifier      |
+| `semester`  | INT       | CHECK (1–8)              | Semester of enrollment |
+| `grade`     | CHAR(2)   | —                        | Grade received         |
+
+The table uses a **composite primary key**:
 
 ```text
 (roll_no, course_id, semester)
 ```
 
+This ensures that the same student cannot be enrolled in the same course more than once in the same semester.
+
 ### Faculty
 
-| Column       | Data Type   | Constraint  | Description                 |
-| ------------ | ----------- | ----------- | --------------------------- |
-| `faculty_id` | INT         | Primary Key | Unique faculty ID           |
-| `dept_id`    | INT         | Foreign Key | Faculty member's department |
-| `first_name` | VARCHAR(50) | —           | Faculty member's first name |
-| `last_name`  | VARCHAR(50) | —           | Faculty member's last name  |
-| `salary`     | FLOAT       | —           | Faculty salary              |
+Stores faculty members and their department associations.
 
-## 🔗 Database Relationships
+| Column       | Data Type   | Constraints | Description               |
+| ------------ | ----------- | ----------- | ------------------------- |
+| `faculty_id` | INT         | PRIMARY KEY | Unique faculty identifier |
+| `dept_id`    | INT         | FOREIGN KEY | Associated department     |
+| `first_name` | VARCHAR(50) | —           | Faculty first name        |
+| `last_name`  | VARCHAR(50) | —           | Faculty last name         |
+| `salary`     | FLOAT       | —           | Faculty salary            |
+
+---
+
+## 🔗 Entity Relationships
 
 ```text
-Department
-    │
-    ├───────────────┐
-    │               │
-    ▼               ▼
- Student          Course
-    │               │
-    └───────┬───────┘
-            ▼
-       Enrollment
-
-Department
-    │
-    ▼
- Faculty
+                    ┌───────────────┐
+                    │   Department  │
+                    └───────┬───────┘
+                            │
+              ┌─────────────┼─────────────┐
+              │             │             │
+              ▼             ▼             ▼
+        ┌──────────┐   ┌──────────┐  ┌──────────┐
+        │ Student  │   │  Course  │  │ Faculty  │
+        └────┬─────┘   └────┬─────┘  └──────────┘
+             │              │
+             │              │
+             └──────┬───────┘
+                    ▼
+             ┌──────────────┐
+             │  Enrollment  │
+             └──────────────┘
 ```
 
 ### Relationships
 
-* One **Department** can have many **Students**.
-* One **Department** can offer many **Courses**.
-* One **Student** can enroll in multiple **Courses**.
-* One **Course** can have multiple **Students**.
-* The `Enrollment` table implements the many-to-many relationship between students and courses.
-* One **Department** can have multiple **Faculty** members.
+* A **Department** can have multiple students.
+* A **Department** can offer multiple courses.
+* A **Department** can have multiple faculty members.
+* A **Student** can enroll in multiple courses.
+* A **Course** can have multiple students.
+* `Enrollment` creates a **many-to-many relationship** between `Student` and `Course`.
+* Each enrollment belongs to a specific semester and has a grade.
+
+---
 
 ## 💻 SQL Implementation
 
@@ -142,6 +165,8 @@ CREATE TABLE faculty (
 );
 ```
 
+---
+
 ## 📥 Sample Data
 
 ### Departments
@@ -149,7 +174,7 @@ CREATE TABLE faculty (
 ```sql
 INSERT INTO department
 VALUES
-    (1, 'Computer Science'),
+    (1, 'computer science'),
     (2, 'Mechanical');
 ```
 
@@ -159,7 +184,7 @@ VALUES
 INSERT INTO student
 VALUES
     (29, 'Jalpan', 'jalpan@gmail.com', '9786534', 1),
-    (12, 'Shivtej', 'shivtej@gmail.com', '1324576', 2);
+    (12, 'shivtej', 'shivtej@gmail.com', '1324576', 2);
 ```
 
 ### Courses
@@ -168,89 +193,21 @@ VALUES
 INSERT INTO course
 VALUES
     (501, 'DBMS', 1),
-    (502, 'Circuits', 2);
+    (502, 'circuits', 2);
 ```
 
-## ⚠️ Corrections to the Original SQL
-
-The original script contains a few issues that should be corrected before execution.
-
-### 1. Typographical Error
-
-The following statement:
-
-```sql
-nsert into student values ...
-```
-
-should be:
-
-```sql
-INSERT INTO student VALUES
-(12, 'Shivtej', 'shivtej@gmail.com', '1324576', 2);
-```
-
-### 2. Enrollment Roll Number
-
-The original enrollment statements use `roll_no = 101`:
-
-```sql
-INSERT INTO enrollment VALUES (101, 501, 3, 'B');
-INSERT INTO enrollment VALUES (101, 502, 3, 'A');
-```
-
-However, the students inserted have roll numbers `29` and `12`. Because `enrollment.roll_no` is a foreign key referencing `student.roll_no`, `101` does not exist in the `student` table.
-
-A valid example would be:
+### Enrollment
 
 ```sql
 INSERT INTO enrollment
 VALUES
-    (29, 501, 3, 'B');
-
-INSERT INTO enrollment
-VALUES
+    (29, 501, 3, 'B'),
     (12, 502, 3, 'A');
 ```
 
-## 🚀 Getting Started
+---
 
-### Prerequisites
-
-You need an SQL-compatible database system. This project is primarily written in **MySQL syntax**.
-
-Recommended tools:
-
-* MySQL
-* MySQL Workbench
-* XAMPP
-* WAMP
-* phpMyAdmin
-* DBeaver
-
-### Installation
-
-1. Clone the repository:
-
-```bash
-git clone https://github.com/your-username/college-database.git
-```
-
-2. Open MySQL Workbench or another SQL client.
-
-3. Open the SQL script.
-
-4. Execute the database and table creation statements.
-
-5. Insert the sample data.
-
-6. Verify the tables:
-
-```sql
-SHOW TABLES;
-```
-
-## 🔍 Useful Queries
+## 🔍 Useful SQL Queries
 
 ### Display all students
 
@@ -270,7 +227,7 @@ SELECT * FROM department;
 SELECT * FROM course;
 ```
 
-### Display student enrollments
+### Display enrollment records
 
 ```sql
 SELECT * FROM enrollment;
@@ -288,7 +245,7 @@ JOIN department d
     ON s.dept_id = d.dept_id;
 ```
 
-### Display courses with their departments
+### Display courses with departments
 
 ```sql
 SELECT
@@ -300,10 +257,11 @@ JOIN department d
     ON c.dept_id = d.dept_id;
 ```
 
-### Display enrollment details
+### Display complete enrollment information
 
 ```sql
 SELECT
+    s.roll_no,
     s.name,
     c.course_name,
     e.semester,
@@ -315,12 +273,14 @@ JOIN course c
     ON e.course_id = c.course_id;
 ```
 
+---
+
 ## 🧩 SQL Concepts Demonstrated
 
-This project covers several important SQL concepts:
+This project demonstrates:
 
 * `CREATE DATABASE`
-* `USE`
+* `USE DATABASE`
 * `CREATE TABLE`
 * `INSERT INTO`
 * Primary Keys
@@ -329,11 +289,52 @@ This project covers several important SQL concepts:
 * `UNIQUE` constraints
 * `NOT NULL` constraints
 * `CHECK` constraints
-* Table relationships
-* One-to-many relationships
-* Many-to-many relationships
+* One-to-Many relationships
+* Many-to-Many relationships
 * `JOIN` operations
-* Database normalization concepts
+* Relational database design
+* Referential integrity
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+Install any MySQL-compatible environment, such as:
+
+* [MySQL](https://www.mysql.com/)
+* MySQL Workbench
+* XAMPP
+* WAMP
+* DBeaver
+* phpMyAdmin
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/your-username/college-database.git
+```
+
+2. Navigate to the project directory:
+
+```bash
+cd college-database
+```
+
+3. Open the SQL file in MySQL Workbench or your preferred SQL editor.
+
+4. Execute the script.
+
+5. Verify the created tables:
+
+```sql
+SHOW TABLES;
+```
+
+---
 
 ## 📁 Project Structure
 
@@ -344,31 +345,37 @@ college-database/
 └── README.md
 ```
 
+---
+
 ## 🔮 Future Enhancements
 
-The database can be extended with additional functionality, such as:
+The database can be expanded with:
 
-* Attendance management
-* Examination and marks tables
-* Student addresses
-* Faculty courses
-* Course credits
-* Class schedules
-* Fees and payment management
+* Student attendance management
+* Examination and marks management
+* Faculty-course assignments
+* Class timetable management
+* Fees and payment tracking
 * Semester-wise results
 * Student performance reports
+* Course credits
 * Stored procedures
 * Views
 * Triggers
 * Indexing and query optimization
 
+---
+
 ## 📜 License
 
-This project is intended for educational and learning purposes. You are free to modify and extend it for academic projects and SQL practice.
+This project is created for **educational and learning purposes**. You are free to modify and use it for academic projects and SQL practice.
+
+---
 
 ## 👨‍💻 Author
 
 **Jalpan Bhavesh Mandavia**
 
 College Database Management System
-SQL Practice Project
+*MySQL & Relational Database Practice Project*
+

@@ -30,8 +30,8 @@ insert into department values (1, 'computer science'), (2, 'Mechanical');
 insert into student values (29, 'Jalpan', 'jalpan@gmail.com', '9786534', 1);
 insert into student values (12, 'shivtej', 'shivtej@gmail.com', 1324576, 2);
 insert into course values (501, 'DBMS', 1), (502, 'circuits', 2);
-insert into enrollment values (101, 501, 3, 'B');
-insert into enrollment values (101, 502, 3, 'A');
+insert into enrollment values (29, 501, 3, 'B');
+insert into enrollment values (12, 502, 3, 'A');
 
 create table faculty (
 faculty_id int primary key,

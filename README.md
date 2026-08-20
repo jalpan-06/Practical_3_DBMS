@@ -1,10 +1,10 @@
-# 🎓 College Database Management System
+#  College Database Management System
 
 A relational database project built with **MySQL** to model and manage core academic information for a college. The database demonstrates relationships between departments, students, courses, enrollments, and faculty members using SQL constraints and relational database concepts.
 
 ---
 
-## 📌 Overview
+##  Overview
 
 The `college_demo` database consists of five main entities:
 
@@ -18,7 +18,7 @@ The project demonstrates the use of **Primary Keys, Foreign Keys, Unique Constra
 
 ---
 
-## 🗃️ Database Schema
+##  Database Schema
 
 ### Department
 
@@ -118,7 +118,7 @@ Stores faculty members and their department associations.
 
 ---
 
-## 💻 SQL Implementation
+##  SQL Implementation
 
 ```sql
 CREATE DATABASE college_demo;
@@ -167,7 +167,7 @@ CREATE TABLE faculty (
 
 ---
 
-## 📥 Sample Data
+##  Sample Data
 
 ### Departments
 
@@ -207,7 +207,7 @@ VALUES
 
 ---
 
-## 🔍 Useful SQL Queries
+##  Useful SQL Queries
 
 ### Display all students
 
@@ -275,7 +275,7 @@ JOIN course c
 
 ---
 
-## 🧩 SQL Concepts Demonstrated
+##  SQL Concepts Demonstrated
 
 This project demonstrates:
 
@@ -297,7 +297,7 @@ This project demonstrates:
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 
@@ -336,7 +336,7 @@ SHOW TABLES;
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```text
 college-database/
@@ -347,7 +347,7 @@ college-database/
 
 ---
 
-## 🔮 Future Enhancements
+##  Future Enhancements
 
 The database can be expanded with:
 
@@ -366,13 +366,13 @@ The database can be expanded with:
 
 ---
 
-## 📜 License
+##  License
 
 This project is created for **educational and learning purposes**. You are free to modify and use it for academic projects and SQL practice.
 
 ---
 
-## 👨‍💻 Author
+##  Author
 
 **Jalpan Bhavesh Mandavia**
 

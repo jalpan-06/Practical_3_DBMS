@@ -1,134 +1,117 @@
-#  College Database Management System
+#  College Database — SQL Normalization Demo
 
-A relational database project built with **MySQL** to model and manage core academic information for a college. The database demonstrates relationships between departments, students, courses, enrollments, and faculty members using SQL constraints and relational database concepts.
+A relational database project demonstrating **SQL table design, primary keys, foreign keys, unique constraints, check constraints, and database normalization** using a simple college management system.
 
----
-
-##  Overview
-
-The `college_demo` database consists of five main entities:
-
-* **Department** – Stores information about academic departments.
-* **Student** – Stores student details and their department associations.
-* **Course** – Stores courses offered by each department.
-* **Enrollment** – Records student course enrollments, semesters, and grades.
-* **Faculty** – Stores faculty information and their associated departments.
-
-The project demonstrates the use of **Primary Keys, Foreign Keys, Unique Constraints, NOT NULL Constraints, CHECK Constraints, and Composite Primary Keys**.
+The database contains departments, students, courses, enrollments, and faculty.
 
 ---
 
-##  Database Schema
+##  Project Overview
 
-### Department
+This project creates a normalized college database using MySQL.
 
-Stores information about college departments.
+The main objectives are to:
 
-| Column      | Data Type   | Constraints      | Description                  |
-| ----------- | ----------- | ---------------- | ---------------------------- |
-| `dept_id`   | INT         | PRIMARY KEY      | Unique department identifier |
-| `dept_name` | VARCHAR(50) | UNIQUE, NOT NULL | Name of the department       |
+* Demonstrate relational database design
+* Apply **1NF, 2NF, and 3NF**
+* Understand primary and foreign keys
+* Enforce entity and referential integrity
+* Avoid unnecessary data duplication
+* Establish relationships between departments, students, courses, enrollments, and faculty
 
-### Student
+---
 
-Stores student personal and academic information.
+##  Database Structure
 
-| Column      | Data Type   | Constraints | Description                   |
-| ----------- | ----------- | ----------- | ----------------------------- |
-| `roll_no`   | INT         | PRIMARY KEY | Unique student roll number    |
-| `name`      | VARCHAR(50) | NOT NULL    | Student's name                |
-| `email`     | VARCHAR(50) | UNIQUE      | Student email                 |
-| `aadhar_no` | VARCHAR(12) | UNIQUE      | Student identification number |
-| `dept_id`   | INT         | FOREIGN KEY | Associated department         |
+The database is named:
 
-### Course
-
-Stores courses offered by departments.
-
-| Column        | Data Type   | Constraints | Description                    |
-| ------------- | ----------- | ----------- | ------------------------------ |
-| `course_id`   | INT         | PRIMARY KEY | Unique course identifier       |
-| `course_name` | VARCHAR(50) | NOT NULL    | Name of the course             |
-| `dept_id`     | INT         | FOREIGN KEY | Department offering the course |
-
-### Enrollment
-
-Stores the courses taken by students.
-
-| Column      | Data Type | Constraints              | Description            |
-| ----------- | --------- | ------------------------ | ---------------------- |
-| `roll_no`   | INT       | PRIMARY KEY, FOREIGN KEY | Student roll number    |
-| `course_id` | INT       | PRIMARY KEY, FOREIGN KEY | Course identifier      |
-| `semester`  | INT       | CHECK (1–8)              | Semester of enrollment |
-| `grade`     | CHAR(2)   | —                        | Grade received         |
-
-The table uses a **composite primary key**:
-
-```text
-(roll_no, course_id, semester)
+```sql
+college_demo
 ```
 
-This ensures that the same student cannot be enrolled in the same course more than once in the same semester.
+### Tables
 
-### Faculty
-
-Stores faculty members and their department associations.
-
-| Column       | Data Type   | Constraints | Description               |
-| ------------ | ----------- | ----------- | ------------------------- |
-| `faculty_id` | INT         | PRIMARY KEY | Unique faculty identifier |
-| `dept_id`    | INT         | FOREIGN KEY | Associated department     |
-| `first_name` | VARCHAR(50) | —           | Faculty first name        |
-| `last_name`  | VARCHAR(50) | —           | Faculty last name         |
-| `salary`     | FLOAT       | —           | Faculty salary            |
-
----
-
-## 🔗 Entity Relationships
-
-```text
-                    ┌───────────────┐
-                    │   Department  │
-                    └───────┬───────┘
-                            │
-              ┌─────────────┼─────────────┐
-              │             │             │
-              ▼             ▼             ▼
-        ┌──────────┐   ┌──────────┐  ┌──────────┐
-        │ Student  │   │  Course  │  │ Faculty  │
-        └────┬─────┘   └────┬─────┘  └──────────┘
-             │              │
-             │              │
-             └──────┬───────┘
-                    ▼
-             ┌──────────────┐
-             │  Enrollment  │
-             └──────────────┘
-```
+| Table        | Purpose                                      |
+| ------------ | -------------------------------------------- |
+| `department` | Stores department information                |
+| `student`    | Stores student details                       |
+| `course`     | Stores courses offered by departments        |
+| `enrollment` | Connects students with courses and semesters |
+| `faculty`    | Stores faculty information                   |
 
 ### Relationships
 
-* A **Department** can have multiple students.
-* A **Department** can offer multiple courses.
-* A **Department** can have multiple faculty members.
-* A **Student** can enroll in multiple courses.
-* A **Course** can have multiple students.
-* `Enrollment` creates a **many-to-many relationship** between `Student` and `Course`.
-* Each enrollment belongs to a specific semester and has a grade.
+```text
+Department
+   │
+   ├────────── Student
+   │              │
+   │              │
+   │          Enrollment
+   │              │
+   │              │
+   └────────── Course
+   │
+   └────────── Faculty
+```
 
 ---
 
-##  SQL Implementation
+#  Keys and Constraints
+
+The database uses several important relational constraints.
+
+### Primary Keys
+
+Each table has an appropriate primary key:
+
+* `department.dept_id`
+* `student.roll_no`
+* `course.course_id`
+* `faculty.faculty_id`
+* `enrollment(roll_no, course_id, semester)` — composite primary key
+
+### Foreign Keys
+
+Foreign keys establish relationships between tables:
+
+```text
+student.dept_id       → department.dept_id
+course.dept_id        → department.dept_id
+faculty.dept_id       → department.dept_id
+enrollment.roll_no    → student.roll_no
+enrollment.course_id  → course.course_id
+```
+
+### Other Constraints
+
+The schema also uses:
+
+* `NOT NULL`
+* `UNIQUE`
+* `CHECK`
+* `PRIMARY KEY`
+* `FOREIGN KEY`
+
+---
+
+#  Normalization Analysis
+
+##  First Normal Form — 1NF
+
+### Status:  Applied
+
+A table satisfies **1NF** when:
+
+1. Each column contains atomic values.
+2. There are no repeating groups.
+3. Each row can be uniquely identified.
+
+Your database follows these principles.
+
+For example:
 
 ```sql
-CREATE DATABASE college_demo;
-USE college_demo;
-
-CREATE TABLE department (
-    dept_id INT PRIMARY KEY,
-    dept_name VARCHAR(50) UNIQUE NOT NULL
-);
-
 CREATE TABLE student (
     roll_no INT PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
@@ -137,14 +120,53 @@ CREATE TABLE student (
     dept_id INT,
     FOREIGN KEY (dept_id) REFERENCES department(dept_id)
 );
+```
 
-CREATE TABLE course (
-    course_id INT PRIMARY KEY,
-    course_name VARCHAR(50) NOT NULL,
-    dept_id INT,
-    FOREIGN KEY (dept_id) REFERENCES department(dept_id)
-);
+Each attribute contains a single value.
 
+For example:
+
+```text
+roll_no | name   | email
+--------|--------|-------------------
+29      | Jalpan | jalpan@gmail.com
+```
+
+There are no columns such as:
+
+```text
+course1
+course2
+course3
+```
+
+which would violate the idea of atomic attributes.
+
+### Improvement
+
+The `name` column could be further divided:
+
+```sql
+first_name VARCHAR(50),
+last_name VARCHAR(50)
+```
+
+This is not strictly required for 1NF, but it provides better data structure and makes searching and sorting by first/last name easier.
+
+---
+
+#  Second Normal Form — 2NF
+
+### Status:  Applied
+
+A table is in **2NF** when:
+
+1. It is already in 1NF.
+2. Every non-key attribute depends on the **entire primary key**, not just part of it.
+
+The most important example is the `enrollment` table.
+
+```sql
 CREATE TABLE enrollment (
     roll_no INT,
     course_id INT,
@@ -154,228 +176,630 @@ CREATE TABLE enrollment (
     FOREIGN KEY (roll_no) REFERENCES student(roll_no),
     FOREIGN KEY (course_id) REFERENCES course(course_id)
 );
+```
+
+The primary key is:
+
+```text
+(roll_no, course_id, semester)
+```
+
+The `grade` depends on the student's enrollment in a particular course during a particular semester.
+
+Conceptually:
+
+```text
+(roll_no, course_id, semester)
+                ↓
+              grade
+```
+
+Therefore, there is no obvious partial dependency such as:
+
+```text
+roll_no → grade
+```
+
+because a student can take multiple courses and semesters.
+
+### Why this is good
+
+Instead of storing enrollment information inside the student table:
+
+```text
+student
+--------------------------------
+roll_no | course1 | course2 | ...
+```
+
+you created a separate associative table:
+
+```text
+enrollment
+-------------------------------------
+roll_no | course_id | semester | grade
+```
+
+This is a strong relational design choice.
+
+---
+
+#  Third Normal Form — 3NF
+
+### Status:  Applied
+
+A table is in **3NF** when:
+
+1. It is in 2NF.
+2. There are no inappropriate transitive dependencies between non-key attributes.
+
+Your department information is separated into its own table:
+
+```sql
+CREATE TABLE department (
+    dept_id INT PRIMARY KEY,
+    dept_name VARCHAR(50) UNIQUE NOT NULL
+);
+```
+
+Instead of storing:
+
+```text
+student
+----------------------------------------
+roll_no | name | dept_id | dept_name
+```
+
+you store:
+
+```text
+student
+-------------------------
+roll_no | name | dept_id
+```
+
+and:
+
+```text
+department
+-----------------------
+dept_id | dept_name
+```
+
+This avoids repeating department names for every student.
+
+The dependency becomes:
+
+```text
+roll_no → dept_id
+dept_id → dept_name
+```
+
+Rather than storing `dept_name` directly inside `student`.
+
+The same principle is applied to `course` and `faculty`.
+
+---
+
+#  Boyce-Codd Normal Form — BCNF
+
+### Status:  Mostly Applied
+
+BCNF is stricter than 3NF.
+
+A relation is in BCNF if:
+
+> Every determinant is a candidate key.
+
+Your tables generally follow this principle.
+
+For example:
+
+```text
+department
+dept_id → dept_name
+```
+
+`dept_id` is the primary key.
+
+Also:
+
+```text
+student
+roll_no → name, email, aadhar_no, dept_id
+```
+
+`roll_no` is the primary key.
+
+Additionally, `email` and `aadhar_no` are declared `UNIQUE`, meaning they behave as candidate keys in the design.
+
+So the current schema is **close to BCNF**.
+
+However, declaring a column `UNIQUE` does not necessarily mean the business rule guarantees it will always be a candidate key. That depends on the real-world requirements of the system.
+
+---
+
+#  Fourth Normal Form — 4NF
+
+### Status:  Not Specifically Demonstrated
+
+4NF deals with **multivalued dependencies**.
+
+For example, suppose a student independently has:
+
+```text
+multiple hobbies
+multiple phone numbers
+```
+
+A poorly designed table might contain:
+
+```text
+student
+--------------------------------
+roll_no | hobby | phone_number
+```
+
+This could create unnecessary combinations:
+
+```text
+29 | Cricket | 9876543210
+29 | Cricket | 9999999999
+29 | Football | 9876543210
+29 | Football | 9999999999
+```
+
+A normalized design would separate these independent multivalued relationships:
+
+```text
+student_hobby
+student_phone
+```
+
+Your current schema does not contain such independent multivalued attributes, so **4NF is not really being tested by this project**.
+
+---
+
+#  Fifth Normal Form — 5NF
+
+### Status:  Not Specifically Demonstrated
+
+5NF deals with **join dependencies** and situations where a table can be decomposed into multiple smaller tables without losing information.
+
+Your college database does not contain a complex enough relationship to meaningfully demonstrate 5NF.
+
+Therefore, it is better to describe this project as primarily demonstrating:
+
+```text
+1NF → 2NF → 3NF
+```
+
+with a design that is generally compatible with **BCNF**.
+
+---
+
+#  Normalization Summary
+
+| Normal Form | Status             | Explanation                                             |
+| ----------- | ------------------ | ------------------------------------------------------- |
+| **1NF**     |  Applied           | Atomic values and unique rows                           |
+| **2NF**     |  Applied           | No problematic partial dependencies                     |
+| **3NF**     |  Applied           | Department data separated from students/courses/faculty |
+| **BCNF**    |  Mostly applied    | Determinants are generally candidate keys               |
+| **4NF**     |  Not demonstrated  | No meaningful multivalued dependencies                  |
+| **5NF**     |  Not demonstrated  | No complex join dependencies                            |
+
+---
+
+#  Recommended Improvements
+
+Although the database is reasonably normalized, several improvements can make it more professional.
+
+## 1. Split `name` into first and last name
+
+Current:
+
+```sql
+name VARCHAR(50)
+```
+
+Better:
+
+```sql
+first_name VARCHAR(50) NOT NULL,
+last_name VARCHAR(50) NOT NULL
+```
+
+This provides more flexibility for:
+
+* Sorting
+* Searching
+* Formal reports
+* Personalized greetings
+* Data analysis
+
+---
+
+## 2. Use `DECIMAL` instead of `FLOAT` for salary
+
+Current:
+
+```sql
+salary FLOAT
+```
+
+For financial values, `FLOAT` can introduce floating-point precision issues.
+
+Better:
+
+```sql
+salary DECIMAL(10,2)
+```
+
+Example:
+
+```text
+75000.50
+```
+
+This is more appropriate for salary data.
+
+---
+
+## 3. Make important foreign keys `NOT NULL`
+
+Currently:
+
+```sql
+dept_id INT
+```
+
+If every student must belong to a department, use:
+
+```sql
+dept_id INT NOT NULL
+```
+
+Similarly, if every course and faculty member must belong to a department:
+
+```sql
+dept_id INT NOT NULL
+```
+
+This prevents orphaned or incomplete records.
+
+---
+
+## 4. Improve the Aadhar number datatype
+
+You currently have:
+
+```sql
+aadhar_no VARCHAR(12)
+```
+
+Using `VARCHAR` is actually preferable to an integer because identification numbers should generally be treated as **identifiers, not numbers**.
+
+However, you should enforce the expected format.
+
+For example, in MySQL:
+
+```sql
+aadhar_no VARCHAR(12) UNIQUE
+```
+
+could be supplemented with an appropriate validation rule.
+
+Avoid storing it as:
+
+```sql
+aadhar_no INT
+```
+
+because leading zeros could be lost.
+
+---
+
+## 5. Improve naming consistency
+
+Use consistent naming conventions throughout the database.
+
+For example:
+
+```text
+department
+student
+course
+enrollment
+faculty
+```
+
+This is already reasonably consistent.
+
+For columns, maintain a consistent style:
+
+```text
+dept_id
+course_id
+faculty_id
+roll_no
+```
+
+Avoid mixing styles such as:
+
+```text
+deptId
+course_ID
+FacultyID
+```
+
+---
+
+#  Improved Schema
+
+A more production-ready version could look like this:
+
+```sql
+CREATE DATABASE college_demo;
+USE college_demo;
+
+CREATE TABLE department (
+    dept_id INT PRIMARY KEY,
+    dept_name VARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE student (
+    roll_no INT PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50),
+    email VARCHAR(100) NOT NULL UNIQUE,
+    aadhar_no VARCHAR(12) NOT NULL UNIQUE,
+    dept_id INT NOT NULL,
+
+    FOREIGN KEY (dept_id)
+        REFERENCES department(dept_id)
+);
+
+CREATE TABLE course (
+    course_id INT PRIMARY KEY,
+    course_name VARCHAR(50) NOT NULL,
+    dept_id INT NOT NULL,
+
+    FOREIGN KEY (dept_id)
+        REFERENCES department(dept_id)
+);
+
+CREATE TABLE enrollment (
+    roll_no INT,
+    course_id INT,
+    semester INT NOT NULL,
+    grade CHAR(2),
+
+    PRIMARY KEY (roll_no, course_id, semester),
+
+    FOREIGN KEY (roll_no)
+        REFERENCES student(roll_no),
+
+    FOREIGN KEY (course_id)
+        REFERENCES course(course_id),
+
+    CHECK (semester BETWEEN 1 AND 8)
+);
 
 CREATE TABLE faculty (
     faculty_id INT PRIMARY KEY,
-    dept_id INT,
-    first_name VARCHAR(50),
+    dept_id INT NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50),
-    salary FLOAT,
-    FOREIGN KEY (dept_id) REFERENCES department(dept_id)
+    salary DECIMAL(10,2),
+
+    FOREIGN KEY (dept_id)
+        REFERENCES department(dept_id)
 );
 ```
 
 ---
 
-##  Sample Data
+#  Entity Relationship Overview
 
-### Departments
+The relationships can be represented as:
 
-```sql
-INSERT INTO department
-VALUES
-    (1, 'computer science'),
-    (2, 'Mechanical');
-```
-
-### Students
-
-```sql
-INSERT INTO student
-VALUES
-    (29, 'Jalpan', 'jalpan@gmail.com', '9786534', 1),
-    (12, 'shivtej', 'shivtej@gmail.com', '1324576', 2);
-```
-
-### Courses
-
-```sql
-INSERT INTO course
-VALUES
-    (501, 'DBMS', 1),
-    (502, 'circuits', 2);
-```
-
-### Enrollment
-
-```sql
-INSERT INTO enrollment
-VALUES
-    (29, 501, 3, 'B'),
-    (12, 502, 3, 'A');
-```
-
----
-
-##  Useful SQL Queries
-
-### Display all students
-
-```sql
-SELECT * FROM student;
-```
-
-### Display all departments
-
-```sql
-SELECT * FROM department;
-```
-
-### Display all courses
-
-```sql
-SELECT * FROM course;
-```
-
-### Display enrollment records
-
-```sql
-SELECT * FROM enrollment;
-```
-
-### Display students with their departments
-
-```sql
-SELECT
-    s.roll_no,
-    s.name,
-    d.dept_name
-FROM student s
-JOIN department d
-    ON s.dept_id = d.dept_id;
-```
-
-### Display courses with departments
-
-```sql
-SELECT
-    c.course_id,
-    c.course_name,
-    d.dept_name
-FROM course c
-JOIN department d
-    ON c.dept_id = d.dept_id;
-```
-
-### Display complete enrollment information
-
-```sql
-SELECT
-    s.roll_no,
-    s.name,
-    c.course_name,
-    e.semester,
-    e.grade
-FROM enrollment e
-JOIN student s
-    ON e.roll_no = s.roll_no
-JOIN course c
-    ON e.course_id = c.course_id;
+```text
+                    ┌─────────────────┐
+                    │   DEPARTMENT    │
+                    ├─────────────────┤
+                    │ PK dept_id      │
+                    │    dept_name    │
+                    └────────┬────────┘
+                             │
+              ┌──────────────┼──────────────┐
+              │              │              │
+              │              │              │
+              ▼              ▼              ▼
+       ┌────────────┐ ┌────────────┐ ┌────────────┐
+       │  STUDENT   │ │   COURSE   │ │  FACULTY   │
+       ├────────────┤ ├────────────┤ ├────────────┤
+       │ PK roll_no │ │PK course_id│ │PK faculty_id│
+       │ first_name │ │ course_name│ │ first_name │
+       │ last_name  │ │ FK dept_id │ │ last_name  │
+       │ email      │ └─────┬──────┘ │ salary     │
+       │ aadhar_no  │       │        │ FK dept_id │
+       │ FK dept_id │       │        └────────────┘
+       └──────┬─────┘       │
+              │              │
+              └──────┬───────┘
+                     ▼
+             ┌────────────────┐
+             │   ENROLLMENT   │
+             ├────────────────┤
+             │ PK roll_no     │
+             │ PK course_id   │
+             │ PK semester    │
+             │ grade          │
+             └────────────────┘
 ```
 
 ---
 
-##  SQL Concepts Demonstrated
+#  Key Normalization Concepts Demonstrated
 
-This project demonstrates:
+This project demonstrates several important database-design concepts.
 
-* `CREATE DATABASE`
-* `USE DATABASE`
-* `CREATE TABLE`
-* `INSERT INTO`
-* Primary Keys
-* Foreign Keys
-* Composite Primary Keys
-* `UNIQUE` constraints
-* `NOT NULL` constraints
-* `CHECK` constraints
-* One-to-Many relationships
-* Many-to-Many relationships
-* `JOIN` operations
-* Relational database design
-* Referential integrity
+### Atomic Data
 
----
+Each field stores one logical value.
 
-##  Getting Started
+### Entity Separation
 
-### Prerequisites
+Departments, students, courses, and faculty are maintained separately.
 
-Install any MySQL-compatible environment, such as:
+### Relationship Modeling
 
-* [MySQL](https://www.mysql.com/)
-* MySQL Workbench
-* XAMPP
-* WAMP
-* DBeaver
-* phpMyAdmin
+The `enrollment` table models the many-to-many relationship between students and courses.
 
-### Installation
-
-1. Clone the repository:
-
-```bash
-git clone https://github.com/your-username/college-database.git
+```text
+Student ───< Enrollment >─── Course
 ```
 
-2. Navigate to the project directory:
+### Composite Primary Key
 
-```bash
-cd college-database
-```
-
-3. Open the SQL file in MySQL Workbench or your preferred SQL editor.
-
-4. Execute the script.
-
-5. Verify the created tables:
+The enrollment table uses:
 
 ```sql
-SHOW TABLES;
+PRIMARY KEY (roll_no, course_id, semester)
 ```
+
+This prevents the same student from being enrolled in the same course multiple times in the same semester.
+
+### Referential Integrity
+
+Foreign keys prevent invalid references.
+
+For example, an enrollment cannot reference a student that doesn't exist.
 
 ---
 
-##  Project Structure
+#  Important Data-Modeling Consideration
+
+There is one business rule that deserves further consideration:
+
+```sql
+PRIMARY KEY (roll_no, course_id, semester)
+```
+
+This assumes a student can have only **one enrollment record for a particular course in a particular semester**.
+
+If the college allows re-examination, retakes, multiple attempts, or multiple sections of the same course, the enrollment design may need additional attributes such as:
+
+```text
+attempt_no
+section_id
+academic_year
+```
+
+For example:
+
+```text
+roll_no | course_id | semester | academic_year | attempt_no | grade
+```
+
+The correct design depends on the college's actual business rules.
+
+---
+
+#  Possible Future Enhancements
+
+This project can be expanded with:
+
+* `classroom` table
+* `attendance` table
+* `exam` table
+* `result` table
+* `course_faculty` table
+* `academic_year`
+* `semester`
+* `student_phone` table
+* `student_address` table
+* `course_prerequisite` table
+* Indexes for frequently searched columns
+* `ON DELETE` and `ON UPDATE` rules
+* Views
+* Stored procedures
+* Triggers
+* SQL queries for reports and analytics
+
+---
+
+#  Normalization Level of This Project
+
+The current project should be described professionally as:
+
+> **A normalized relational database primarily demonstrating First Normal Form (1NF), Second Normal Form (2NF), and Third Normal Form (3NF), with a generally BCNF-compatible design. 4NF and 5NF are not specifically demonstrated because the schema does not contain meaningful multivalued or complex join dependencies.**
+
+This is more accurate than claiming that the database is "fully normalized to 5NF."
+
+---
+
+#  Technologies
+
+* **Database:** MySQL
+* **Language:** SQL
+* **Concepts:** Relational Database Design, Normalization, Primary Keys, Foreign Keys, Constraints, Entity Relationships
+
+---
+
+#  Suggested GitHub Repository Structure
 
 ```text
 college-database/
 │
-├── college_demo.sql
-└── README.md
+├── README.md
+│
+├── sql/
+│   ├── 01_create_database.sql
+│   ├── 02_create_tables.sql
+│   ├── 03_insert_data.sql
+│   └── 04_queries.sql
+│
+├── diagrams/
+│   └── er-diagram.png
+│
+└── docs/
+    └── normalization.md
 ```
 
 ---
 
-##  Future Enhancements
+#  Author
 
-The database can be expanded with:
+**Jalpan**
 
-* Student attendance management
-* Examination and marks management
-* Faculty-course assignments
-* Class timetable management
-* Fees and payment tracking
-* Semester-wise results
-* Student performance reports
-* Course credits
-* Stored procedures
-* Views
-* Triggers
-* Indexing and query optimization
+College Database — SQL Normalization Practice Project
 
 ---
 
-##  License
+##  Conclusion
 
-This project is created for **educational and learning purposes**. You are free to modify and use it for academic projects and SQL practice.
+The database is a good starting point for learning relational database normalization.
 
----
+The strongest parts of the current design are:
 
-##  Author
+* Separate department entity
+* Separate student and course entities
+* Proper many-to-many `enrollment` table
+* Composite primary key in enrollment
+* Foreign-key relationships
+* Unique constraints on email and Aadhar number
+* Check constraint on semester
 
-**Jalpan Bhavesh Mandavia**
+The main improvements I'd recommend are:
 
-College Database Management System
-*MySQL & Relational Database Practice Project*
+1. Split `name` into `first_name` and `last_name`
+2. Change `salary FLOAT` to `DECIMAL(10,2)`
+3. Make required foreign keys `NOT NULL`
+4. Consider adding `academic_year` to enrollment
+5. Add appropriate indexes as the database grows
+6. Define explicit `ON DELETE` / `ON UPDATE` behavior
+7. Add additional tables only when the business requirements justify them
 
+**Overall:** the schema demonstrates **1NF → 2NF → 3NF well**, is **generally BCNF-compatible**, and does not need to artificially introduce 4NF/5NF structures just to claim higher normalization.

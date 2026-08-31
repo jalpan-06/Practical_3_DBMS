@@ -804,7 +804,7 @@ The main improvements I'd recommend are:
 
 **Overall:** the schema demonstrates **1NF → 2NF → 3NF well**, is **generally BCNF-compatible**, and does not need to artificially introduce 4NF/5NF structures just to claim higher normalization.
 
-## created an index
+## Created an index
     
 create index idx_student_dept on student(dept_id);
 create index idx_student_dept → Creates a new index named idx_student_dept.

@@ -41,3 +41,6 @@ last_name varchar(50),
 salary float,
 foreign key (dept_id) references department(dept_id)
 );
+
+create index idx_student_dept on student(dept_id);
+select*from student where dept_id = 1;

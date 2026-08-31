@@ -803,3 +803,13 @@ The main improvements I'd recommend are:
 7. Add additional tables only when the business requirements justify them
 
 **Overall:** the schema demonstrates **1NF → 2NF → 3NF well**, is **generally BCNF-compatible**, and does not need to artificially introduce 4NF/5NF structures just to claim higher normalization.
+
+## created an index
+    
+create index idx_student_dept on student(dept_id);
+create index idx_student_dept → Creates a new index named idx_student_dept.
+on student(dept_id) → The index is built on the dept_id column of the student table.
+
+select * from student where dept_id = 1;
+select * from student → Retrieves all columns from the student table.
+where dept_id = 1 → Filters rows where the department ID equals 1.
